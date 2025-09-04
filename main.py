@@ -1,7 +1,7 @@
 import cv2
 import os
-from detect_board import detect_board
-from detect_shapes import detect_shapes
+from utilities.Board_Detection import detect_board
+from utilities.Shaps_Detection import detect_shapes
 
 def main():
     dataset_path = r"E:\Collage\MIA\Task 11\Classical Detection\Data Set"
@@ -14,19 +14,27 @@ def main():
             img = cv2.imread(img_path)
 
             if img is None:
-                print(f"❌ Skipping {filename} (could not load)")
+                print(f"[❌] Skipping {filename} (could not load)")
                 continue
 
             # Step 1: detect board
             board = detect_board(img)
+            if board is None:
+                print(f"[⚠️] Skipping {filename} (board not detected)")
+                continue
 
             # Step 2: detect shapes inside board
             result = detect_shapes(board)
+            if result is None:
+                print(f"[⚠️] Skipping {filename} (shape detection failed)")
+                continue
 
             # Step 3: save result
-            save_path = os.path.join(results_path, f"result_{filename}")
+            save_name = f"result_{filename}"
+            save_path = os.path.join(results_path, save_name)
             cv2.imwrite(save_path, result)
-            print(f"✅ Processed {filename} → saved {save_path}")
+
+            print(f"[✅] Processed {filename} → saved as {save_name}")
 
 if __name__ == "__main__":
     main()
